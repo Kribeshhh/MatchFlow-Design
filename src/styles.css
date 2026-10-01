@@ -2351,8 +2351,11 @@ dialog[open] {
   animation: panel-in 0.35s cubic-bezier(0.2, 0.8, 0.3, 1);
 }
 .game-focus {
-  margin: auto 10% auto auto;
+  position: fixed;
+  inset: 0;
+  margin: auto;
   width: 390px;
+  max-width: calc(100vw - 32px);
 }
 .focus-content {
   position: relative;
@@ -3976,13 +3979,12 @@ dialog[open] {
   }
   .game-focus {
     position: fixed;
-    inset: auto 0 0;
-    margin: 0;
-    width: 100%;
-    max-width: 100%;
+    inset: 0;
+    margin: auto;
+    width: 390px;
+    max-width: calc(100vw - 32px);
     max-height: 90svh;
-    border-radius: 17px 17px 0 0;
-    border-bottom: 0;
+    border-radius: 17px;
   }
   .focus-content {
     padding: 25px;
