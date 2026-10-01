@@ -37,3 +37,25 @@ Tests use a separate `TEST_DATABASE_URL` ending in `_test`, apply migrations, an
 The landing page remains at `/`. The functional app starts at `/tournaments`, `/register`, `/login`, and `/dashboard`. Tournament creation, team rosters, approvals, single-elimination brackets, schedules, results, and champion declaration use actual database records.
 
 See [MVP implementation and workflow guide](docs/MVP_IMPLEMENTATION.md) for setup, database models, security, API endpoints, demo workflows, tested behavior, and limitations.
+
+## Starting again after a restart
+
+From the MatchFlow folder, run:
+
+```sh
+npm run db:local
+npm run dev
+```
+
+Keep that terminal running, then open http://localhost:5173 in your browser. The command is a long-running server: it does not return to a shell prompt while the app is running. Stop it with Control+C before starting another copy.
+
+If startup stays on the `concurrently` line without printing either server's ready message, stop it with Control+C and repair the installed dependencies:
+
+```sh
+npm ci
+npx prisma generate
+npm run db:local
+npm run dev
+```
+
+This reinstalls dependencies from the lockfile; it does not reset the database or change `.env`. If the embedded preview is unresponsive while the terminal shows both servers ready, open the same localhost URL in a regular browser.
