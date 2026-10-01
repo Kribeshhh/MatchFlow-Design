@@ -1,0 +1,1456 @@
+/* Search-first landing hero. Side spheres frame a quiet, usable center. */
+.search-hero {
+  height: calc(100svh - 146px);
+  min-height: 780px;
+  max-height: 1000px;
+  overflow: visible;
+  margin: 0;
+  isolation: isolate;
+  background: radial-gradient(ellipse at 50% 43%, #4d603b1c, transparent 49%);
+}
+.search-hero:before {
+  content: "";
+  position: absolute;
+  inset: 5% 12%;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 47% 45%, #b4774d0d, transparent 40%),
+    radial-gradient(ellipse at 61% 41%, #a2b8710c, transparent 38%);
+  filter: blur(30px);
+}
+.hero-center {
+  position: relative;
+  z-index: 8;
+  max-width: 640px;
+  width: calc(100% - 48px);
+  margin: 0 auto;
+  text-align: center;
+  padding-top: clamp(125px, 16vh, 190px);
+  animation: word-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.hero-wordmark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  color: var(--paper);
+  position: relative;
+}
+.hero-wordmark > svg {
+  width: 52px;
+  height: 49px;
+  color: var(--lime);
+}
+.hero-wordmark > span {
+  font-family: Display, sans-serif;
+  font-size: 66px;
+  line-height: 1;
+  font-style: italic;
+  letter-spacing: -0.015em;
+}
+.hero-wordmark > span > span {
+  color: var(--lime);
+}
+.hero-wordmark > sup {
+  align-self: flex-start;
+  font-size: 10px;
+  margin-top: 7px;
+  margin-left: -7px;
+  color: #bdc6af;
+}
+.centered-eyebrow {
+  justify-content: center;
+  margin-top: 14px;
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  color: #97a187;
+}
+.search-hero .hero-center h1 {
+  font-family: Barlow, Arial, sans-serif;
+  font-size: clamp(34px, 3.2vw, 46px);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.045em;
+  margin-top: 43px;
+}
+.search-hero .hero-center h1 > span {
+  display: inline;
+  animation: none;
+  color: var(--lime);
+}
+.hero-center > p {
+  font-size: 14px;
+  color: #94a088;
+  margin-top: 13px;
+}
+.hero-search {
+  position: relative;
+  margin-top: 33px;
+  text-align: left;
+  z-index: 12;
+}
+.search-form {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 8px 8px 19px;
+  height: 66px;
+  border: 1px solid #afc28b3b;
+  background: #11170fdb;
+  box-shadow:
+    0 12px 50px #0003,
+    inset 0 1px 0 #d1e0b408;
+  border-radius: 7px;
+  backdrop-filter: blur(14px);
+  transition:
+    border-color 0.25s,
+    box-shadow 0.25s;
+}
+.search-form:focus-within {
+  border-color: #bedc6780;
+  box-shadow:
+    0 0 0 3px #d3f45d08,
+    0 16px 50px #0004;
+}
+.search-symbol {
+  color: #7d8c6d;
+  flex-shrink: 0;
+}
+.search-form input {
+  min-width: 0;
+  flex: 1;
+  color: var(--paper);
+  font-size: 14px;
+  background: transparent;
+  border: none;
+  height: 100%;
+  outline: none;
+}
+.search-form input::placeholder {
+  color: #78876c;
+}
+.search-form input::-webkit-search-cancel-button {
+  cursor: pointer;
+  filter: grayscale(1);
+}
+.search-filter {
+  position: relative;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: 0;
+  border-left: 1px solid #a2b78326;
+  color: #83966d;
+  padding: 8px 11px;
+  height: 29px;
+  flex-shrink: 0;
+}
+.search-filter:hover,
+.search-filter.active {
+  color: var(--lime);
+}
+.search-filter .dot {
+  position: absolute;
+  top: 0;
+  right: 5px;
+  width: 4px;
+  height: 4px;
+}
+.search-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  background: var(--lime);
+  border: 1px solid var(--lime);
+  color: #17200e;
+  font-family: Mono;
+  font-size: 10px;
+  height: 48px;
+  padding: 0 18px;
+  border-radius: 4px;
+  transition:
+    background 0.2s,
+    box-shadow 0.2s;
+}
+.search-submit:hover {
+  background: #e0ff79;
+  box-shadow: 0 0 20px #d3f45d16;
+}
+.search-suggestions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 18px;
+  min-height: 19px;
+}
+.search-suggestions > span {
+  font-family: Mono;
+  font-size: 7px;
+  color: #68795b;
+  letter-spacing: 0.1em;
+}
+.search-suggestions button {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  border: 0;
+  background: none;
+  padding: 3px 0;
+  color: #93a182;
+  font-size: 10px;
+  transition: color 0.2s;
+}
+.search-suggestions button:hover {
+  color: var(--lime);
+}
+.search-suggestions svg {
+  color: #61754c;
+}
+.center-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 31px;
+}
+.center-actions .button {
+  min-height: 47px;
+  border-radius: 4px;
+  padding: 0 18px;
+  gap: 12px;
+  font-size: 8px;
+}
+.center-actions .outline {
+  background: #121710b3;
+  border-color: #8ea37133;
+}
+.center-live {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 11px;
+  margin-top: 32px;
+  color: #7e8c70;
+  font-size: 9px;
+}
+.center-live .live-label {
+  font-size: 7px;
+  letter-spacing: 0.1em;
+}
+.center-live > span:last-child {
+  border-left: 1px solid #8aa16b40;
+  padding-left: 11px;
+}
+.center-live i:not(.dot) {
+  font-style: normal;
+  color: #acc27d;
+  margin: 0 5px;
+}
+.search-popover {
+  position: absolute;
+  top: 76px;
+  left: 0;
+  right: 0;
+  border: 1px solid #94ad6259;
+  background: #192215;
+  box-shadow: 0 30px 90px #000b;
+  border-radius: 7px;
+  padding: 15px;
+  animation: panel-in 0.2s ease;
+  z-index: 15;
+  text-align: left;
+}
+.search-results-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 10px;
+  color: #bdcda5;
+}
+.search-results-heading > .mono {
+  font-size: 8px;
+}
+.search-results-heading .icon-button {
+  width: 26px;
+  height: 26px;
+  border: none;
+}
+.search-match-count {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  font-size: 7px;
+  color: #98aa83;
+  padding: 5px 0 13px;
+  border-bottom: 1px solid var(--line);
+}
+.search-match-count > span {
+  color: #758767;
+  font-size: 6px;
+}
+.search-result-list {
+  max-height: 285px;
+  overflow-y: auto;
+  scrollbar-color: #566d39 #192215;
+  overscroll-behavior: contain;
+}
+.search-result {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 13px 6px;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid #a8bd8320;
+  transition: background 0.2s;
+}
+.search-result:hover,
+.search-result:focus-visible {
+  background: #26351d;
+}
+.search-result > .row-game-icon {
+  width: 36px;
+  height: 36px;
+}
+.search-result > span:nth-child(2) {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+}
+.search-result strong {
+  font-weight: 500;
+  font-size: 12px;
+}
+.search-result small {
+  font-size: 10px;
+  color: #8fa07a;
+}
+.search-result small > i {
+  font-style: normal;
+  margin: 0 4px;
+  color: #62774d;
+}
+.search-result .result-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  color: #adc48a;
+  font-family: Mono;
+  font-size: 7px;
+}
+.search-result > svg {
+  color: #9ab779;
+  flex-shrink: 0;
+}
+.search-filters {
+  display: flex;
+  gap: 12px;
+  padding: 6px 0 16px;
+}
+.search-filters label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-family: Mono;
+  font-size: 7px;
+  color: #93a57c;
+}
+.search-filters select {
+  font-family: Barlow;
+  font-size: 12px;
+  width: 100%;
+  color: #d3dfc5;
+  background: #111b0d;
+  padding: 9px;
+  border: 1px solid #8ba3634d;
+  border-radius: 3px;
+  color-scheme: dark;
+}
+.search-empty {
+  padding: 28px 15px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.search-empty > svg {
+  color: #819768;
+}
+.search-empty strong {
+  font-size: 16px;
+  font-weight: 500;
+}
+.search-empty p {
+  font-size: 12px;
+}
+.search-empty button {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: var(--lime);
+  background: none;
+  border: 0;
+  font-size: 11px;
+  padding: 7px;
+}
+.search-hero .universe {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  pointer-events: none;
+  overflow: clip;
+  z-index: 2;
+}
+.search-hero .bubble-position {
+  pointer-events: auto;
+}
+.search-hero .core,
+.search-hero .data-lines,
+.search-hero .scene-corner,
+.search-hero .scene-instruction {
+  display: none;
+}
+.search-hero .universe-grid {
+  inset: 0;
+  opacity: 0.25;
+  transform: none;
+  mask-image: radial-gradient(
+    ellipse at center,
+    transparent 20%,
+    #000 80%,
+    transparent 100%
+  );
+  background-size: 65px 65px;
+}
+.search-hero .scene-coordinate {
+  right: 5%;
+  top: 30px;
+  font-size: 7px;
+  color: #4c5b42;
+}
+.search-hero .universe-haze {
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 7% 35%, #b0c17f10, transparent 40%),
+    radial-gradient(ellipse at 88% 64%, #b2c78414, transparent 38%);
+}
+.search-hero .bubble-pubg {
+  left: 3.5%;
+  top: 33%;
+  width: clamp(160px, 16vw, 232px);
+  height: clamp(160px, 16vw, 232px);
+}
+.search-hero .bubble-ml {
+  left: 10%;
+  top: 5%;
+  width: clamp(122px, 12vw, 178px);
+  height: clamp(122px, 12vw, 178px);
+}
+.search-hero .bubble-cs2 {
+  left: 8%;
+  top: 71%;
+  width: clamp(126px, 12.8vw, 185px);
+  height: clamp(126px, 12.8vw, 185px);
+}
+.search-hero .bubble-valorant {
+  left: auto;
+  right: 4%;
+  top: 27%;
+  width: clamp(165px, 16vw, 232px);
+  height: clamp(165px, 16vw, 232px);
+}
+.search-hero .bubble-ff {
+  left: auto;
+  right: 10%;
+  top: 66%;
+  width: clamp(132px, 13vw, 188px);
+  height: clamp(132px, 13vw, 188px);
+}
+.search-hero .bubble-dota {
+  left: auto;
+  right: 15%;
+  top: 3%;
+  width: clamp(100px, 10vw, 145px);
+  height: clamp(100px, 10vw, 145px);
+}
+.search-hero .glass-bubble {
+  background:
+    radial-gradient(ellipse at 31% 24%, #dbe6c51a, transparent 43%),
+    radial-gradient(ellipse at 76% 87%, #baca9233, transparent 42%),
+    radial-gradient(ellipse at 32% 68%, #050b0559, transparent 65%),
+    linear-gradient(135deg, #bfce9d0b, #39492d0c 55%, #d5dcb811);
+  border-color: #cdd9ad40;
+  box-shadow:
+    inset 0 0 27px #c6d5a717,
+    inset 5px 8px 15px #e5ebbd0e,
+    inset -7px -8px 16px #d2e19c20,
+    12px 24px 50px #0003;
+}
+.search-hero .bubble-caption {
+  font-size: 6px;
+  color: #657957;
+  bottom: -21px;
+}
+.search-hero .bubble-index {
+  font-size: 5px;
+  top: 23%;
+  color: #aaba914d;
+}
+.search-hero .bubble-status {
+  font-size: 5px;
+  bottom: 23%;
+}
+.search-hero .bubble-explore {
+  font-size: 5px;
+  bottom: 13%;
+  gap: 3px;
+}
+.search-hero .bubble-explore svg {
+  width: 10px;
+}
+.search-hero .pubg-logo strong {
+  font-size: 54px;
+  border-width: 2.5px;
+  padding: 1px 5px 3px;
+}
+.search-hero .pubg-logo > span {
+  font-size: 8px;
+  letter-spacing: 0.39em;
+  margin-top: 6px;
+}
+.search-hero .ml-logo strong {
+  font-size: 22px;
+}
+.search-hero .ml-logo .logo-diamond {
+  font-size: 23px;
+  margin-bottom: 5px;
+}
+.search-hero .ml-logo small {
+  font-size: 4px;
+  letter-spacing: 0.28em;
+  margin-top: 5px;
+}
+.search-hero .ff-logo strong {
+  font-size: 31px;
+}
+.search-hero .ff-logo small {
+  font-size: 4px;
+  letter-spacing: 0.35em;
+}
+.cs2-logo {
+  color: #c7b995;
+  transform: rotate(-6deg);
+}
+.cs2-logo strong {
+  font-family: Display;
+  font-size: 53px;
+  font-style: italic;
+  letter-spacing: -0.035em;
+  line-height: 0.9;
+}
+.cs2-logo strong > span {
+  color: #d2aa67;
+  padding-left: 4px;
+}
+.cs2-logo small {
+  font-family: Mono;
+  letter-spacing: 0.15em;
+  font-size: 5px;
+  margin-top: 9px;
+}
+.valorant-logo {
+  color: #ceb5a4;
+  transform: rotate(6deg);
+}
+.valorant-logo svg {
+  width: 60px;
+  height: 48px;
+  color: #c39185;
+}
+.valorant-logo strong {
+  font-family: Barlow;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  margin-top: 4px;
+}
+.valorant-logo small {
+  font-family: Mono;
+  font-size: 4px;
+  letter-spacing: 0.23em;
+  margin-top: 7px;
+}
+.dota-logo {
+  color: #b8a38d;
+  transform: rotate(-8deg);
+}
+.dota-logo svg {
+  height: 32px;
+  width: 32px;
+  color: #b8876b;
+}
+.dota-logo strong {
+  font-family: Georgia, serif;
+  font-size: 16px;
+  letter-spacing: 0.12em;
+  margin-top: 8px;
+}
+.dota-logo small {
+  font-family: Mono;
+  font-size: 3px;
+  letter-spacing: 0.06em;
+  margin-top: 5px;
+}
+.search-hero .ghost-one {
+  left: 29%;
+  top: 8%;
+  width: 45px;
+  height: 45px;
+  filter: blur(2px);
+  opacity: 0.4;
+}
+.search-hero .ghost-two {
+  left: 23%;
+  top: 65%;
+  width: 55px;
+  height: 55px;
+  filter: blur(1px);
+  opacity: 0.3;
+}
+.search-hero .ghost-three {
+  right: 2%;
+  top: 60%;
+  width: 44px;
+  height: 44px;
+  opacity: 0.4;
+}
+.ghost-four {
+  left: 1%;
+  top: 9%;
+  width: 83px;
+  height: 83px;
+  filter: blur(3px);
+  opacity: 0.35;
+  animation: ghost-float 9s ease-in-out infinite alternate;
+}
+.ghost-five {
+  right: 3%;
+  top: 87%;
+  width: 77px;
+  height: 77px;
+  filter: blur(3px);
+  opacity: 0.2;
+  animation: ghost-float 12s ease-in-out infinite alternate-reverse;
+}
+.ghost-six {
+  right: 28%;
+  top: 79%;
+  width: 35px;
+  height: 35px;
+  filter: blur(1px);
+  opacity: 0.3;
+  animation: ghost-float 8s ease-in-out infinite alternate;
+}
+.search-hero .hero-bottom {
+  left: 5%;
+  right: 5%;
+  bottom: 24px;
+  z-index: 5;
+  font-size: 7px;
+}
+.search-hero .hero-bottom > span:nth-child(2) {
+  margin-left: 0;
+  margin-right: 0;
+  font-size: 7px;
+}
+.game-tabs {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.game-tab .cs2-logo strong {
+  font-size: 29px;
+}
+.game-tab .cs2-logo small {
+  font-size: 3px;
+  margin-top: 4px;
+  letter-spacing: 0.07em;
+}
+.game-tab .valorant-logo svg {
+  height: 25px;
+  width: 34px;
+}
+.game-tab .valorant-logo strong {
+  font-size: 8px;
+  margin-top: 1px;
+}
+.game-tab .valorant-logo small {
+  display: none;
+}
+.game-tab .dota-logo svg {
+  height: 22px;
+  width: 22px;
+}
+.game-tab .dota-logo strong {
+  font-size: 9px;
+  margin-top: 4px;
+}
+.game-tab .dota-logo small {
+  display: none;
+}
+.row-game-icon .cs2-logo strong {
+  font-size: 19px;
+}
+.row-game-icon .cs2-logo small {
+  font-size: 2px;
+  letter-spacing: 0;
+  margin-top: 3px;
+}
+.row-game-icon .valorant-logo svg {
+  height: 17px;
+  width: 23px;
+}
+.row-game-icon .valorant-logo strong {
+  font-size: 5px;
+  letter-spacing: 0.03em;
+  margin-top: 0;
+}
+.row-game-icon .valorant-logo small {
+  display: none;
+}
+.row-game-icon .dota-logo svg {
+  height: 17px;
+  width: 17px;
+}
+.row-game-icon .dota-logo strong {
+  font-size: 6px;
+  letter-spacing: 0.08em;
+  margin-top: 3px;
+}
+.row-game-icon .dota-logo small {
+  display: none;
+}
+.focus-content > .valorant-logo svg {
+  height: 54px;
+  width: 68px;
+}
+.focus-content > .valorant-logo strong {
+  font-size: 22px;
+}
+.focus-content > .dota-logo svg {
+  height: 45px;
+  width: 45px;
+}
+.focus-content > .dota-logo strong {
+  font-size: 23px;
+}
+.modal-art > .valorant-logo svg {
+  height: 50px;
+  width: 63px;
+}
+.modal-art > .valorant-logo strong {
+  font-size: 20px;
+}
+.modal-art > .dota-logo svg {
+  height: 48px;
+  width: 48px;
+}
+.modal-art > .dota-logo strong {
+  font-size: 23px;
+}
+.modal-art > .cs2-logo strong {
+  font-size: 65px;
+}
+@media (min-width: 1600px) {
+  .search-hero {
+    max-width: none;
+  }
+  .hero-center {
+    max-width: 700px;
+  }
+  .search-hero .bubble-pubg {
+    left: 7%;
+  }
+  .search-hero .bubble-valorant {
+    right: 8%;
+  }
+  .search-hero .bubble-ml {
+    left: 17%;
+  }
+  .search-hero .bubble-dota {
+    right: 19%;
+  }
+  .search-hero .bubble-cs2 {
+    left: 15%;
+  }
+  .search-hero .bubble-ff {
+    right: 15%;
+  }
+}
+@media (max-width: 1150px) and (min-width: 681px) {
+  .hero-center {
+    max-width: 540px;
+    padding-top: 160px;
+  }
+  .hero-wordmark > span {
+    font-size: 56px;
+  }
+  .hero-wordmark > svg {
+    width: 44px;
+    height: 43px;
+  }
+  .search-hero .hero-center h1 {
+    font-size: 38px;
+  }
+  .hero-center > p {
+    font-size: 12px;
+  }
+  .search-hero .bubble-pubg {
+    left: -3%;
+    top: 35%;
+    width: 165px;
+    height: 165px;
+  }
+  .search-hero .bubble-valorant {
+    right: -3%;
+    top: 35%;
+    width: 165px;
+    height: 165px;
+  }
+  .search-hero .bubble-ml {
+    left: 7%;
+    top: 6%;
+    width: 135px;
+    height: 135px;
+  }
+  .search-hero .bubble-dota {
+    right: 8%;
+    top: 7%;
+    width: 119px;
+    height: 119px;
+  }
+  .search-hero .bubble-cs2 {
+    left: 5%;
+    top: 74%;
+    width: 137px;
+    height: 137px;
+  }
+  .search-hero .bubble-ff {
+    right: 5%;
+    top: 74%;
+    width: 135px;
+    height: 135px;
+  }
+  .search-hero .pubg-logo strong {
+    font-size: 42px;
+  }
+  .search-hero .ml-logo strong {
+    font-size: 17px;
+  }
+  .search-hero .ff-logo strong {
+    font-size: 25px;
+  }
+  .search-hero .valorant-logo svg {
+    width: 45px;
+    height: 37px;
+  }
+  .search-hero .valorant-logo strong {
+    font-size: 13px;
+  }
+  .search-hero .cs2-logo strong {
+    font-size: 40px;
+  }
+  .search-hero .ghost-two,
+  .search-hero .ghost-six {
+    display: none;
+  }
+  .search-hero .universe {
+    overflow: clip;
+  }
+  .search-hero {
+    overflow: clip;
+  }
+  .center-actions .button {
+    font-size: 7px;
+    padding: 0 15px;
+  }
+}
+@media (max-width: 850px) and (min-width: 681px) {
+  .hero-center {
+    max-width: 460px;
+  }
+  .search-form {
+    gap: 9px;
+    padding-left: 14px;
+  }
+  .search-form input {
+    font-size: 12px;
+  }
+  .search-submit {
+    font-size: 8px;
+    padding: 0 13px;
+    gap: 9px;
+  }
+  .search-hero .bubble-pubg {
+    left: -6%;
+    width: 155px;
+    height: 155px;
+  }
+  .search-hero .bubble-valorant {
+    right: -6%;
+    width: 155px;
+    height: 155px;
+  }
+  .search-hero .hero-center h1 {
+    font-size: 36px;
+  }
+  .center-actions {
+    gap: 10px;
+  }
+  .center-actions .button {
+    gap: 9px;
+  }
+  .search-suggestions {
+    gap: 10px;
+  }
+  .search-suggestions button {
+    font-size: 9px;
+  }
+}
+@media (max-width: 680px) {
+  .search-hero {
+    height: auto;
+    min-height: 850px;
+    max-height: none;
+    margin: 0;
+    overflow: clip;
+  }
+  .hero-center {
+    width: calc(100% - 40px);
+    max-width: 460px;
+    padding-top: 64px;
+    animation: none;
+  }
+  .hero-wordmark {
+    gap: 9px;
+  }
+  .hero-wordmark > span {
+    font-size: 48px;
+  }
+  .hero-wordmark > svg {
+    width: 38px;
+    height: 35px;
+  }
+  .hero-wordmark > sup {
+    font-size: 7px;
+    margin-top: 6px;
+    margin-left: -5px;
+  }
+  .centered-eyebrow {
+    font-size: 6px;
+    letter-spacing: 0.17em;
+    margin-top: 13px;
+  }
+  .search-hero .hero-center h1 {
+    font-size: 33px;
+    margin-top: 34px;
+    line-height: 1.2;
+  }
+  .hero-center > p {
+    font-size: 11px;
+    line-height: 1.7;
+    max-width: 280px;
+    margin: 12px auto 0;
+  }
+  .hero-search {
+    margin-top: 24px;
+  }
+  .search-form {
+    height: 59px;
+    padding: 6px 6px 6px 12px;
+    gap: 8px;
+    border-radius: 5px;
+  }
+  .search-symbol {
+    width: 17px;
+  }
+  .search-form input {
+    font-size: 11px;
+  }
+  .search-filter {
+    padding: 5px 7px;
+    height: 25px;
+  }
+  .search-filter svg {
+    width: 15px;
+  }
+  .search-submit {
+    height: 45px;
+    font-size: 7px;
+    padding: 0 10px;
+    gap: 5px;
+  }
+  .search-submit svg {
+    width: 14px;
+  }
+  .search-suggestions {
+    margin-top: 14px;
+    gap: 8px 12px;
+  }
+  .search-suggestions > span {
+    font-size: 6px;
+  }
+  .search-suggestions button {
+    font-size: 8px;
+  }
+  .search-suggestions button svg {
+    width: 8px;
+  }
+  .center-actions {
+    gap: 10px;
+    margin-top: 26px;
+  }
+  .center-actions .button {
+    font-size: 6px;
+    padding: 0 10px;
+    gap: 6px;
+    min-height: 42px;
+  }
+  .center-actions .button svg {
+    width: 13px;
+  }
+  .center-actions .primary > svg:first-child {
+    display: none;
+  }
+  .center-live {
+    gap: 8px;
+    margin-top: 22px;
+    font-size: 7px;
+  }
+  .center-live .live-label {
+    font-size: 6px;
+  }
+  .center-live > span:last-child {
+    padding-left: 8px;
+  }
+  .center-live i:not(.dot) {
+    margin: 0 3px;
+  }
+  .search-hero .universe {
+    position: absolute;
+    inset: 470px 0 auto;
+    width: 100%;
+    height: 340px;
+    margin: 0;
+    overflow: visible;
+  }
+  .search-hero .bubble-pubg {
+    left: 5%;
+    top: 10px;
+    width: 116px;
+    height: 116px;
+  }
+  .search-hero .bubble-ml {
+    left: auto;
+    right: 5%;
+    top: 13px;
+    width: 108px;
+    height: 108px;
+  }
+  .search-hero .bubble-valorant {
+    left: calc(50% - 48px);
+    right: auto;
+    top: 24px;
+    width: 96px;
+    height: 96px;
+  }
+  .search-hero .bubble-cs2 {
+    left: 8%;
+    top: 176px;
+    width: 92px;
+    height: 92px;
+  }
+  .search-hero .bubble-ff {
+    left: auto;
+    right: 6%;
+    top: 168px;
+    width: 99px;
+    height: 99px;
+  }
+  .search-hero .bubble-dota {
+    left: calc(50% - 50px);
+    right: auto;
+    top: 165px;
+    width: 100px;
+    height: 100px;
+  }
+  .search-hero .pubg-logo strong {
+    font-size: 33px;
+    border-width: 1.5px;
+    padding: 1px 3px 2px;
+  }
+  .search-hero .pubg-logo > span {
+    font-size: 5px;
+    margin-top: 4px;
+  }
+  .search-hero .ml-logo strong {
+    font-size: 15px;
+  }
+  .search-hero .ml-logo .logo-diamond {
+    font-size: 17px;
+    margin-bottom: 3px;
+  }
+  .search-hero .ml-logo small {
+    font-size: 3px;
+    margin-top: 3px;
+  }
+  .search-hero .ff-logo strong {
+    font-size: 20px;
+  }
+  .search-hero .ff-logo small {
+    font-size: 2px;
+    letter-spacing: 0.2em;
+    margin-top: 4px;
+  }
+  .search-hero .cs2-logo strong {
+    font-size: 29px;
+  }
+  .search-hero .cs2-logo small {
+    font-size: 3px;
+    letter-spacing: 0.05em;
+    margin-top: 5px;
+  }
+  .search-hero .valorant-logo svg {
+    width: 27px;
+    height: 24px;
+  }
+  .search-hero .valorant-logo strong {
+    font-size: 8px;
+    letter-spacing: 0.06em;
+    margin-top: 1px;
+  }
+  .search-hero .valorant-logo small {
+    font-size: 2px;
+    margin-top: 4px;
+  }
+  .search-hero .dota-logo svg {
+    width: 26px;
+    height: 26px;
+  }
+  .search-hero .dota-logo strong {
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  .search-hero .dota-logo small {
+    font-size: 2px;
+    margin-top: 3px;
+  }
+  .search-hero .bubble-index {
+    font-size: 3px;
+    top: 18%;
+  }
+  .search-hero .bubble-status {
+    font-size: 3px;
+    bottom: 19%;
+    gap: 3px;
+  }
+  .search-hero .bubble-status .dot {
+    width: 2px;
+    height: 2px;
+  }
+  .search-hero .bubble-explore {
+    display: none;
+  }
+  .search-hero .bubble-caption {
+    font-size: 5px;
+    bottom: -16px;
+    left: 10%;
+    right: 10%;
+    white-space: nowrap;
+  }
+  .search-hero .bubble-caption:before {
+    display: none;
+  }
+  .search-hero .bubble-caption > span {
+    font-size: 5px;
+  }
+  .search-hero .scene-coordinate {
+    display: none;
+  }
+  .search-hero .ghost-one {
+    display: block;
+    left: 2%;
+    top: 134px;
+    width: 23px;
+    height: 23px;
+    opacity: 0.3;
+  }
+  .search-hero .ghost-two {
+    display: block;
+    left: 46%;
+    top: 135px;
+    width: 23px;
+    height: 23px;
+    opacity: 0.2;
+  }
+  .search-hero .ghost-three {
+    display: block;
+    right: 0;
+    top: 310px;
+    width: 38px;
+    height: 38px;
+    opacity: 0.2;
+  }
+  .search-hero .ghost-four,
+  .search-hero .ghost-five,
+  .search-hero .ghost-six {
+    display: none;
+  }
+  .search-hero .hero-bottom {
+    left: 6%;
+    right: 6%;
+    bottom: 18px;
+    font-size: 5px;
+  }
+  .search-hero .hero-bottom > span:nth-child(2) {
+    font-size: 4px;
+    max-width: 110px;
+  }
+  .search-popover {
+    top: 68px;
+    padding: 12px;
+  }
+  .search-results-heading > .mono {
+    font-size: 7px;
+  }
+  .search-result {
+    gap: 8px;
+    padding: 12px 2px;
+  }
+  .search-result strong {
+    font-size: 11px;
+  }
+  .search-result small {
+    font-size: 8px;
+  }
+  .search-result .result-status {
+    font-size: 6px;
+  }
+  .search-result > svg {
+    width: 12px;
+  }
+  .search-result > .row-game-icon {
+    width: 29px;
+    height: 31px;
+  }
+  .search-match-count {
+    font-size: 6px;
+  }
+  .search-result-list {
+    max-height: 285px;
+  }
+  .search-filters {
+    gap: 8px;
+  }
+  .search-filters select {
+    font-size: 11px;
+    padding: 8px;
+  }
+  .game-tabs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .game-tab .cs2-logo strong {
+    font-size: 27px;
+  }
+  .game-tab .valorant-logo svg {
+    width: 35px;
+    height: 25px;
+  }
+  .game-tab .dota-logo svg {
+    width: 23px;
+    height: 23px;
+  }
+  .game-tab .dota-logo strong {
+    font-size: 10px;
+  }
+  .game-focus .focus-content > .valorant-logo strong {
+    font-size: 19px;
+  }
+  .game-focus .focus-content > .dota-logo strong {
+    font-size: 22px;
+  }
+}
+@media (max-width: 360px) {
+  .hero-center {
+    width: calc(100% - 30px);
+  }
+  .hero-wordmark > span {
+    font-size: 43px;
+  }
+  .hero-wordmark > svg {
+    width: 32px;
+    height: 31px;
+  }
+  .search-hero .hero-center h1 {
+    font-size: 30px;
+  }
+  .search-submit {
+    font-size: 6px;
+    padding: 0 7px;
+  }
+  .search-form {
+    gap: 6px;
+    padding-left: 10px;
+  }
+  .search-filter {
+    padding: 5px;
+  }
+  .search-form input {
+    font-size: 10px;
+  }
+  .search-suggestions {
+    gap: 8px;
+  }
+  .search-suggestions > span {
+    display: none;
+  }
+  .center-actions {
+    gap: 8px;
+  }
+  .center-actions .button {
+    font-size: 5.5px;
+    padding: 0 9px;
+  }
+  .search-hero .bubble-pubg {
+    left: 3%;
+    width: 101px;
+    height: 101px;
+  }
+  .search-hero .bubble-ml {
+    right: 3%;
+    width: 92px;
+    height: 92px;
+  }
+  .search-hero .bubble-valorant {
+    width: 81px;
+    height: 81px;
+    left: calc(50% - 40px);
+    top: 35px;
+  }
+  .search-hero .bubble-cs2 {
+    left: 5%;
+    width: 85px;
+    height: 85px;
+  }
+  .search-hero .bubble-ff {
+    right: 3%;
+    width: 92px;
+    height: 92px;
+  }
+  .search-hero .bubble-dota {
+    width: 88px;
+    height: 88px;
+    left: calc(50% - 44px);
+  }
+  .search-hero .pubg-logo strong {
+    font-size: 28px;
+  }
+  .search-hero .ml-logo strong {
+    font-size: 13px;
+  }
+  .search-hero .bubble-index {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-center {
+    animation: none;
+  }
+  .search-hero .bubble-position {
+    transform: none !important;
+  }
+}
+.search-hero .game-focus {
+  pointer-events: auto;
+}
+.search-hero .game-focus::backdrop {
+  pointer-events: auto;
+}
+.search-hero .bubble-dota .bubble-index {
+  top: 17%;
+}
+.search-hero .bubble-dota .bubble-status {
+  bottom: 15%;
+}
+.search-hero .bubble-dota .bubble-explore {
+  bottom: 7%;
+}
+@media (min-width: 851px) and (max-width: 1150px) {
+  .search-hero .bubble-pubg {
+    left: 1%;
+  }
+  .search-hero .bubble-valorant {
+    right: 1%;
+  }
+}
+@media (min-width: 681px) and (max-width: 850px) {
+  .search-hero .bubble-pubg {
+    left: 1%;
+    width: 14vw;
+    height: 14vw;
+  }
+  .search-hero .bubble-valorant {
+    right: 1%;
+    width: 14vw;
+    height: 14vw;
+  }
+  .search-hero .pubg-logo strong {
+    font-size: 30px;
+    border-width: 1.5px;
+  }
+  .search-hero .pubg-logo > span {
+    font-size: 4px;
+  }
+  .search-hero .valorant-logo svg {
+    width: 29px;
+    height: 24px;
+  }
+  .search-hero .valorant-logo strong {
+    font-size: 8px;
+  }
+  .search-hero .valorant-logo small {
+    font-size: 2px;
+  }
+  .search-hero .bubble-pubg .bubble-index,
+  .search-hero .bubble-valorant .bubble-index {
+    font-size: 3px;
+    top: 19%;
+  }
+  .search-hero .bubble-pubg .bubble-status,
+  .search-hero .bubble-valorant .bubble-status {
+    font-size: 3px;
+    bottom: 19%;
+  }
+  .search-hero .bubble-pubg .bubble-explore,
+  .search-hero .bubble-valorant .bubble-explore {
+    font-size: 3px;
+    bottom: 9%;
+  }
+}
+@media (min-width: 681px) and (max-width: 1150px) {
+  .search-hero .bubble-pubg {
+    left: 3%;
+  }
+  .search-hero .bubble-valorant {
+    right: 3%;
+  }
+}

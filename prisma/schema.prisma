@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+enum Role {
+  PLAYER
+  ORGANIZER
+}
+enum TournamentPhase {
+  REGISTRATION
+  ONGOING
+  COMPLETED
+}
+enum RegistrationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+enum MatchStatus {
+  PENDING
+  SCHEDULED
+  COMPLETED
+}
+model User {
+  id String @id @default(cuid())
+  username String @unique
+  email String @unique
+  passwordHash String
+  role Role
+  createdAt DateTime @default(now())
+  sessions Session[]
+  captainTeams Team[]
+  memberships TeamMember[]
+  tournaments Tournament[]
+}
+model Session {
+  tokenHash String @id
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  @@index([expiresAt])
+}
+model Team {
+  id String @id @default(cuid())
+  name String
+  game String
+  description String @default("")
+  logoUrl String?
+  captainId String
+  captain User @relation(fields: [captainId], references: [id])
+  members TeamMember[]
+  registrations TournamentRegistration[]
+  matchesA Match[] @relation("TeamA")
+  matchesB Match[] @relation("TeamB")
+  wins Match[] @relation("Winner")
+  championships Tournament[] @relation("Champion")
+  createdAt DateTime @default(now())
+  @@unique([captainId, name, game])
+  @@index([game])
+}
+model TeamMember {
+  teamId String
+  userId String
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
+  joinedAt DateTime @default(now())
+  @@id([teamId, userId])
+  @@index([userId])
+}
+model Tournament {
+  id String @id @default(cuid())
+  name String
+  game String
+  description String
+  rules String
+  teamSize Int
+  maxTeams Int
+  opensAt DateTime
+  closesAt DateTime
+  startsAt DateTime
+  format String @default("SINGLE_ELIMINATION")
+  phase TournamentPhase @default(REGISTRATION)
+  organizerId String
+  organizer User @relation(fields: [organizerId], references: [id])
+  registrations TournamentRegistration[]
+  matches Match[]
+  championId String?
+  champion Team? @relation("Champion", fields: [championId], references: [id])
+  createdAt DateTime @default(now())
+  @@index([game, phase])
+  @@index([organizerId])
+}
+model TournamentRegistration {
+  id String @id @default(cuid())
+  tournamentId String
+  teamId String
+  tournament Tournament @relation(fields: [tournamentId], references: [id])
+  team Team @relation(fields: [teamId], references: [id])
+  status RegistrationStatus @default(PENDING)
+  roster Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([tournamentId, teamId])
+}
+model Match {
+  id String @id @default(cuid())
+  tournamentId String
+  tournament Tournament @relation(fields: [tournamentId], references: [id])
+  round Int
+  position Int
+  teamAId String?
+  teamBId String?
+  teamA Team? @relation("TeamA", fields: [teamAId], references: [id])
+  teamB Team? @relation("TeamB", fields: [teamBId], references: [id])
+  scoreA Int?
+  scoreB Int?
+  winnerId String?
+  winner Team? @relation("Winner", fields: [winnerId], references: [id])
+  isBye Boolean @default(false)
+  status MatchStatus @default(PENDING)
+  scheduledAt DateTime?
+  completedAt DateTime?
+  venue String @default("")
+  @@unique([tournamentId, round, position])
+  @@index([scheduledAt])
+}
