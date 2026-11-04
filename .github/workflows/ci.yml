@@ -1,0 +1,70 @@
+name: MatchFlow checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 127.0.0.1:5432:5432
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres@127.0.0.1:5432/matchflow_dev
+      TEST_DATABASE_URL: postgresql://postgres@127.0.0.1:5432/matchflow_test
+      CLIENT_ORIGIN: http://localhost:5173
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npx prisma generate
+      - run: createdb -h 127.0.0.1 -U postgres matchflow_dev && createdb -h 127.0.0.1 -U postgres matchflow_test
+      - run: npm run check
+      - run: npm run test:migrations
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - run: npm audit --audit-level=high
+      - run: npm run test:restore
+      - run: npm run test:release
+      - run: docker build --target runtime -f infra/Dockerfile -t matchflow:verified .
+      - name: Container readiness and unprivileged runtime
+        run: |
+          docker run -d --name matchflow-release --network host --read-only --tmpfs /tmp --cap-drop ALL --security-opt no-new-privileges --env NODE_ENV=production --env HOST=127.0.0.1 --env PORT=3198 --env DATABASE_URL="$TEST_DATABASE_URL" --env APP_ORIGIN=https://release.matchflow.invalid --env CLIENT_ORIGIN=https://release.matchflow.invalid --env NOTIFICATION_WORKER=false matchflow:verified
+          trap 'docker rm -f matchflow-release >/dev/null' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent -H 'Host: release.matchflow.invalid' http://127.0.0.1:3198/api/ready; then break; fi
+            sleep 1
+          done
+          curl --fail --silent -H 'Host: release.matchflow.invalid' http://127.0.0.1:3198/api/ready
+          test "$(docker exec matchflow-release id -u)" != 0
+          docker stop --time 25 matchflow-release
+          test "$(docker inspect --format '{{.State.ExitCode}}' matchflow-release)" = 0
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+      - name: Install pinned scanners
+        run: |
+          python3 -m venv /tmp/matchflow-scanners
+          /tmp/matchflow-scanners/bin/pip install semgrep==1.179.0
+          curl --fail --location --retry 3 https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz -o /tmp/gitleaks.tar.gz
+          curl --fail --location --retry 3 https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_checksums.txt -o /tmp/checksums.txt
+          expected=$(awk '$2=="gitleaks_8.30.1_linux_x64.tar.gz" {print $1}' /tmp/checksums.txt)
+          test -n "$expected"
+          echo "$expected  /tmp/gitleaks.tar.gz" | sha256sum --check
+          tar -xzf /tmp/gitleaks.tar.gz -C /tmp gitleaks
+      - run: /tmp/matchflow-scanners/bin/semgrep scan --config infra/security/semgrep.yml --error --metrics=off --disable-version-check apps packages
+      - run: /tmp/gitleaks dir . --redact
+      - run: /tmp/gitleaks git . --redact

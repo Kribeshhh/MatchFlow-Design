@@ -1,11 +1,5 @@
 import { execFileSync } from "node:child_process";
-import {
-  existsSync,
-  mkdirSync,
-  writeFileSync,
-  readFileSync,
-  unlinkSync,
-} from "node:fs";
+import { existsSync, mkdirSync, writeFileSync, readFileSync, unlinkSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { randomBytes } from "node:crypto";
 import dotenv from "dotenv";
@@ -25,9 +19,7 @@ if (process.argv[2] === "stop") {
 }
 if (!existsSync(".env")) {
   if (existsSync(data))
-    throw new Error(
-      "Restore your .env credentials before starting this existing database.",
-    );
+    throw new Error("Restore your .env credentials before starting this existing database.");
   const password = randomBytes(24).toString("hex");
   writeFileSync(
     ".env",
@@ -94,10 +86,6 @@ for (const name of ["matchflow_dev", "matchflow_test"]) {
     { encoding: "utf8", env },
   ).trim();
   if (!exists)
-    run(
-      "createdb",
-      ["-h", "127.0.0.1", "-p", "55432", "-U", url.username, name],
-      { env },
-    );
+    run("createdb", ["-h", "127.0.0.1", "-p", "55432", "-U", url.username, name], { env });
 }
 console.log("Local PostgreSQL ready. Credentials are stored only in .env.");

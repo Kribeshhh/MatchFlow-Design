@@ -1,18 +1,21 @@
-import { db, teamInclude } from "../server/db.js";
-import { hashPassword } from "../server/security.js";
-import {
-  generateBracket,
-  saveResult,
-  scheduleMatch,
-} from "../server/tournaments.js";
+import { db, teamInclude } from "../apps/api/src/database/client.js";
+import { hashPassword } from "../apps/api/src/modules/auth/security.js";
+import { generateBracket } from "../apps/api/src/modules/brackets/service.js";
+import { saveResult, scheduleMatch } from "../apps/api/src/modules/matches/service.js";
+const seedUrl = new URL(process.env.DATABASE_URL!);
 if (
-  process.env.NODE_ENV === "production" &&
+  process.env.NODE_ENV === "production" ||
+  !["localhost", "127.0.0.1", "[::1]"].includes(seedUrl.hostname) ||
+  !seedUrl.pathname.endsWith("_dev") ||
   process.env.SEED_DEMO_DATA !== "yes"
 )
   throw new Error(
-    "Demo accounts are for local development. Set SEED_DEMO_DATA=yes only for an intentional demo environment.",
+    "Demo seeding requires explicit opt-in and a loopback _dev database outside production.",
   );
-const passwordHash = await hashPassword("MatchFlowDemo!2026");
+const password = process.env.DEMO_SEED_PASSWORD;
+if (!password || password.length < 16)
+  throw new Error("Provide DEMO_SEED_PASSWORD with at least 16 characters.");
+const passwordHash = await hashPassword(password);
 const account = async (username: string, role: "PLAYER" | "ORGANIZER") =>
   db.user.upsert({
     where: { email: `${username}@matchflow.test` },
@@ -56,10 +59,7 @@ try {
         description: "Fictional demonstration roster.",
         captainId: users[index * 2].id,
         members: {
-          create: [
-            { userId: users[index * 2].id },
-            { userId: users[index * 2 + 1].id },
-          ],
+          create: [{ userId: users[index * 2].id }, { userId: users[index * 2 + 1].id }],
         },
       },
       include: teamInclude,
@@ -183,9 +183,7 @@ try {
         const tournament = await db.tournament.findUniqueOrThrow({
           where: { id: event.id },
         });
-        const when = new Date(
-          tournament.startsAt.getTime() + ready.round * 3600000,
-        ).toISOString();
+        const when = new Date(tournament.startsAt.getTime() + ready.round * 3600000).toISOString();
         await scheduleMatch(
           event.id,
           ready.id,
@@ -202,7 +200,7 @@ try {
   console.log(
     "Demo data ready. Login: demo_organizer@matchflow.test or demo_player@matchflow.test",
   );
-  console.log("Local demo password: MatchFlowDemo!2026");
+  console.log("Demo accounts created; credentials were supplied through the environment.");
 } finally {
   await db.$disconnect();
 }

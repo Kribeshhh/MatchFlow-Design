@@ -1,0 +1,49 @@
+# Local integration only. Supply randomly generated secrets through the environment.
+services:
+  database:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_USER: matchflow
+      POSTGRES_DB: matchflow_integration
+      POSTGRES_PASSWORD: ${LOCAL_DB_PASSWORD:?Generate a local integration password}
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U matchflow -d matchflow_integration]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - integration-data:/var/lib/postgresql/data
+  migrate:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
+      target: migration
+    environment:
+      DATABASE_URL: ${LOCAL_DATABASE_URL:?Set the container-network integration URL}
+    depends_on:
+      database:
+        condition: service_healthy
+  api:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
+      target: runtime
+    environment:
+      DATABASE_URL: ${LOCAL_DATABASE_URL:?Set the container-network integration URL}
+      APP_ORIGIN: https://localhost:8443
+      CLIENT_ORIGIN: https://localhost:8443
+      STAFF_MFA_KEY: ${LOCAL_STAFF_MFA_KEY:?Generate a local-only MFA encryption key}
+      NOTIFICATION_WORKER: "true"
+    ports:
+      - 127.0.0.1:3102:3001
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    init: true
+    stop_grace_period: 30s
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+volumes:
+  integration-data:

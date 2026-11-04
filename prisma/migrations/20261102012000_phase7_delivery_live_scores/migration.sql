@@ -1,0 +1,5 @@
+BEGIN;
+ALTER TABLE "Notification" ADD COLUMN "inApp" BOOLEAN NOT NULL DEFAULT true;
+ALTER TABLE "Match" ADD COLUMN "liveScoreA" INTEGER, ADD COLUMN "liveScoreB" INTEGER;
+ALTER TABLE "Match" ADD CONSTRAINT match_live_scores CHECK (("liveScoreA" IS NULL AND "liveScoreB" IS NULL) OR ("liveScoreA" BETWEEN 0 AND 999 AND "liveScoreB" BETWEEN 0 AND 999 AND "liveScoreA" IS NOT NULL AND "liveScoreB" IS NOT NULL));
+COMMIT;

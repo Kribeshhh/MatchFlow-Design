@@ -1,3 +1,5 @@
+> Historical MVP guide. The 2026-10-29 [audit findings](audit-findings.md) and [verification record](verification.md) supersede current-state guarantees below. October 1 checks are historical; dashboard privacy and snapshot-history defects have since been reproduced. Do not use this guide as production deployment approval.
+
 # MatchFlow core MVP
 
 MatchFlow now supports a complete database-backed tournament lifecycle behind the existing landing page. The established hero, glass spheres, search preview, typography, colors, original bracket demo, and responsive presentation remain intact. Navigation connects discovery, account access, and hosting to actual app routes.
@@ -141,13 +143,7 @@ All endpoints are prefixed with `/api`. Mutations require JSON and `X-MatchFlow:
 
 Requirements: Node.js 22+ and PostgreSQL 17 (or compatible PostgreSQL installation).
 
-```sh
-npm install
-npm run db:local
-npm run db:migrate
-npm run db:seed
-npm run dev
-```
+Use the current [README](../README.md) for local setup. The historical seed workflow is not the production setup procedure.
 
 `db:local` looks for Homebrew PostgreSQL 17 on macOS, otherwise `pg_ctl` on PATH. Set `PG_BIN=/path/to/postgres/bin` for another installation. On this machine PostgreSQL 17 was installed and a project-specific cluster was initialized in `.local/postgres`; it is not a system login service. It listens at 127.0.0.1:55432. The helper creates `matchflow_dev` and `matchflow_test`, and writes generated credentials to private `.env`. It will not replace an existing `.env` or wipe an existing cluster. Stop it with `npm run db:stop`.
 
@@ -160,11 +156,11 @@ npm run build
 npm test
 ```
 
-For deployment, apply `npm run db:migrate`, then build and run `npm start` behind HTTPS. The Express server serves `dist` and supports client-side routes. Set `CLIENT_ORIGIN` to the exact public origin. The current listen address is loopback, suitable for a local reverse proxy; adapt it deliberately for container deployment. Seed data is not production content. Production seeding requires explicit `SEED_DEMO_DATA=yes`.
+For deployment, apply `npm run db:migrate`, then build and run `npm start` behind HTTPS. The Express server serves `dist` and supports client-side routes. Set `CLIENT_ORIGIN` to the exact public origin. The current listen address is loopback, suitable for a local reverse proxy; adapt it deliberately for container deployment. Seed data is not production content. Do not run demo seeding against a real deployment; the existing override is not an adequate production safety boundary.
 
 ## Demo accounts and data
 
-All data and identities are fictional. Local demo password: `MatchFlowDemo!2026`.
+All data and identities are fictional. The legacy seed contains a known shared password; it is intentionally not reproduced here. Seed isolation must be hardened before deployment.
 
 | Account                         | Role                                                           |
 | ------------------------------- | -------------------------------------------------------------- |

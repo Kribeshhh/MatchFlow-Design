@@ -1,0 +1,41 @@
+# ADR 0010 — Organization developer API and signed webhooks
+
+Accepted 2026-11-04 for the user-requested Phase 9. Preserve the modular monolith, existing stack, competition engines and landing identity. Stop after Phase 9.
+
+## Approved scope
+
+The user approved announcements and scheduling as the only developer writes, owners/admins managing credentials, selected tournaments by default, and minimal webhook payloads. This implementation grants only explicitly selected tournaments; there is no organization-wide future-event wildcard. Managers/staff/platform roles do not bypass owner/admin authorization. Integrations belong to the organization rather than impersonating the user who created them. Removing a creator's membership removes their management access but does not disable the organization's integration; current owners/admins revoke it deliberately.
+
+The versioned router mounts before cookie authentication and cookie CSRF middleware. It accepts only Bearer credentials for privileged operations and never treats a browser session as API authority. Existing session routes retain their original middleware and CSRF policy. Public GET routes have a distinct `/api/v1/public` prefix and permit credential-free browser CORS. Privileged API routes are server-to-server with the existing exact origin policy. Public reads ignore session/key authority and exclude private/draft events.
+
+## Credentials, authorization and data
+
+Credentials contain 256 random bits, are returned once, and persist only as SHA-256 digests plus a short display prefix. Expiry is required (1–365 days, default 90). Rotation immediately revokes the selected old key in the issuance transaction. Disable revokes the integration and its keys. Management mutations require a current active verified/migrated owner/admin and recent session authentication. Each request checks current key expiry/revocation and integration status; resource services recheck scopes, organization and selected event inside their transaction.
+
+Scopes are tournaments:read, matches:read, registrations:read, announcements:write and schedules:write. Responses explicitly project fields; no account emails, saved player rosters, invitation metadata, password/session/share hashes, provider secrets or private engine evidence are exposed. Teams are event-approved participant identity summaries. Standings reuse all implemented scoring engines. Battle lobby rounds remain separate from head-to-head matches. Elimination standings return championId rather than inventing league ranks.
+
+Lists use ascending opaque-ID keyset pagination (limit 25/default, 50/max), not assumed chronological cursors. Standings return a complete competition-bounded result. Queries are strict; no expansion or arbitrary filtering/sorting. Every authenticated request creates a durable access-start row before execution and updates status/route template on response completion. A process crash may leave status 102; logs never store raw paths, headers or bodies. Sensitive writes also append fixed-identifier audit events. Access logs/history have no automatic deletion yet; deployment must establish retention and capacity monitoring.
+
+Shared PostgreSQL counters enforce 120 requests/minute/integration and 600/organization, plus 300/source IP for v1 and existing application IP limits. The existing throttle helper now computes UTC windows in SQL to avoid non-UTC database timezone inconsistencies; regression tests cover seeded expiry/counts and existing authentication throttling. Reverse-proxy trust remains an explicit deployment concern.
+
+Writes require idempotency keys, whose request hashes and responses commit with the domain changes. Keys are scoped to the integration. The same request returns its receipt; different content returns 409. Scheduling requires expectedVersion and shares the existing head-to-head/battle scheduling functions with all overlap, date, stage and completed-result restrictions. Integration actions use a null human actor plus an Integration audit identifier; no fabricated user identity. Result confirmation and registration decisions remain exclusively in organizer workflows.
+
+## Webhook reliability and signing
+
+A separate minimal WebhookEvent outbox is captured by PostgreSQL triggers in the same transaction as authoritative competition changes, after LiveRevision increments. No user-content payloads enter the outbox. Event versions serialize per tournament. WebhookDelivery has a unique endpoint/event pair and stable delivery ID. Dispatch and pg-boss enqueue commit atomically. Workers recheck current integration status, organization, selected tournament, read scope and endpoint/event subscription before each attempt.
+
+Reuse PostgreSQL/pg-boss and the existing worker lifecycle; no Redis or extra service is necessary. Jobs contain delivery IDs only. Retries use exponential backoff (five retries by default), terminal DEAD status and the existing dead-letter queue. Owner/admin redrive reuses the delivery ID. Delivery is at least once; the network acceptance/database commit gap can resend. Events may arrive out of order. Receivers verify signatures/timestamps, atomically deduplicate webhook-id and refetch authoritative data; versions can skip and old versions must not overwrite newer state.
+
+The maintained standardwebhooks package signs ID, timestamp and exact body according to the [Standard Webhooks specification](https://github.com/standard-webhooks/standard-webhooks/blob/main/spec/standard-webhooks.md). Receiver verification uses the same library's timestamp tolerance and constant-time signature verification. Timestamps alone do not deduplicate retries; receiver storage is required. Payloads contain event ID/type, tournament/resource IDs, original timestamp and decimal version only. Headers use delivery ID and a fresh attempt timestamp.
+
+HMAC signing keys must remain retrievable, unlike API credentials. Store them encrypted with Node's AES-256-GCM, random 96-bit IV, endpoint ID as authenticated data and an operator-provided 256-bit master key. The master stays outside the database/source. Missing WEBHOOK_ENCRYPTION_KEY explicitly disables webhook configuration/dispatch. The receiver secret is shown only on create/rotation. Rotation is immediate; coordinate the consumer before rotating. Master-key replacement requires deliberate re-encryption/endpoint secret rotation, not simply changing the environment value.
+
+## SSRF boundary
+
+Use ipaddr.js address classification, all-answer DNS validation and pinned HTTPS lookup. Only public unicast addresses, HTTPS/443, no userinfo/query/fragment, no redirects, no ambient proxy and standard certificate/hostname validation. DNS is bounded to 3 seconds, HTTP to 8 seconds, headers to 8 KB; response bodies are discarded. Validate on configuration and resolve/check again for every delivery attempt, preventing rebinding between validation and connection. Reject private, loopback, metadata/link-local, mapped, reserved and multicast destinations, including mixed public/private DNS answers. Egress firewalling remains defense in depth; this is not a substitute for production network qualification.
+
+## Bounds and release gates
+
+At most 25 integrations/organization, five active keys/integration, ten webhook endpoints/integration, 100 selected tournaments. Dashboard metadata bounds are explicit. The workspace's existing latest-100 tournament selector remains. Initial v1 does not expose arbitrary team/user directory data, user PII, tournament creation, results or approvals. SMTP/S3/Google qualification remains separate. Real public HTTPS webhook receiver qualification, encryption-key operations, proxy/egress/load/restore testing, retention and independent security review remain release gates; local tests are not production certification.
+
+Creation subscriptions use initial sync for selected-event scope: granting a tournament or configuring a creation subscription enqueues the original recorded tournament.created event once per endpoint/event. This avoids requiring a future-event wildcard. Preserve the original timestamp/version; legacy pre-Phase-9 records have no fabricated creation event. Unique delivery constraints make repeated grant edits idempotent.

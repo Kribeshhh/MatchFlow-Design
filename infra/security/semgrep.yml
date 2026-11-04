@@ -1,0 +1,40 @@
+rules:
+  - id: unsafe-html
+    languages: [typescript, javascript]
+    severity: ERROR
+    message: Do not render untrusted HTML; use React text rendering.
+    pattern: <$TAG dangerouslySetInnerHTML={...} ... />
+  - id: dynamic-code-execution
+    languages: [typescript, javascript]
+    severity: ERROR
+    message: Dynamic code execution is prohibited.
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: new Function(...)
+  - id: unsafe-sql
+    languages: [typescript, javascript]
+    severity: ERROR
+    message: Review raw SQL; only the isolated pg-boss parameterized adapter is permitted.
+    patterns:
+      - pattern-either:
+          - pattern: $DB.$queryRawUnsafe(...)
+          - pattern: $DB.$executeRawUnsafe(...)
+    paths:
+      exclude: [apps/api/src/modules/notifications/delivery.ts]
+  - id: sql-interpolation
+    languages: [typescript, javascript]
+    severity: ERROR
+    message: Never interpolate into raw SQL strings.
+    pattern-either:
+      - pattern: $DB.$queryRawUnsafe(`...${$X}...`, ...)
+      - pattern: $DB.$executeRawUnsafe(`...${$X}...`, ...)
+  - id: insecure-tls
+    languages: [typescript, javascript]
+    severity: ERROR
+    message: TLS verification must stay enabled.
+    pattern: "{rejectUnauthorized: false}"
+  - id: browser-secret-storage
+    languages: [typescript, javascript]
+    severity: ERROR
+    message: Review browser persistent storage for credential leakage.
+    pattern: localStorage.setItem(...)

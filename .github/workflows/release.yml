@@ -1,0 +1,27 @@
+name: Prepare release artifact
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package:
+    environment: staging
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Build immutable candidate (promotion requires matching successful CI)
+        run: |
+          docker build --pull --target runtime -f infra/Dockerfile -t matchflow:${{ github.sha }} .
+          docker build --target migration -f infra/Dockerfile -t matchflow-migration:${{ github.sha }} .
+          docker build --target worker -f infra/Dockerfile -t matchflow-worker:${{ github.sha }} .
+          docker image inspect matchflow:${{ github.sha }} matchflow-migration:${{ github.sha }} matchflow-worker:${{ github.sha }} > image-manifest.json
+          docker save matchflow:${{ github.sha }} matchflow-migration:${{ github.sha }} matchflow-worker:${{ github.sha }} -o matchflow-images.tar
+          sha256sum matchflow-images.tar > matchflow-images.sha256
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: matchflow-${{ github.sha }}
+          path: |
+            matchflow-images.tar
+            matchflow-images.sha256
+            image-manifest.json
+          retention-days: 7

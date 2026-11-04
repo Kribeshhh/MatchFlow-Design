@@ -1,0 +1,11 @@
+.git
+.env
+.env.*
+.local
+node_modules
+**/dist
+playwright-report
+test-results
+preview
+*.mov
+.DS_Store
